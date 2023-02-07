@@ -153,6 +153,7 @@ export const Comment = ({
         comment={comment}
         onClose={() => setOpenViewReply(false)}
         post={post}
+        commentSuccess={commentSuccess}
       />
     </>
   );

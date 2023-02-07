@@ -176,8 +176,10 @@ export const PostDetail = () => {
     setCommentPage(commentPage + 1);
   };
 
-  const handleVoteComment = async (v: IVoteComment) => {
+  const handleVoteComment = (v: IVoteComment) => {
     const newRecords = comments.records.map((comment) => {
+      console.log(comment._id, v.commentId, comment._id === v.commentId);
+
       if (comment._id === v.commentId) {
         return { ...comment, vote: v.vote };
       }

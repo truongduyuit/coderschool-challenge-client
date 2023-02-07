@@ -1,23 +1,21 @@
+import { Box } from "@mui/material";
+import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   callGetCommentApi,
   IComment,
   IGetCommentResponse,
   IPostModel,
+  IVoteComment,
 } from "../apis";
-import ReactMarkdown from "react-markdown";
-import IconButton from "@mui/material/IconButton";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
-import { setLoading } from "../redux/main";
-import { Box } from "@mui/material";
 import { Comment } from "../components";
+import { useToast } from "../hooks";
+import { setLoading } from "../redux/main";
 
 type Props = {
   open: boolean;
@@ -60,6 +58,19 @@ export const ListChildComment = ({
     });
   }, [commentPage, commentLimit]);
 
+  const handleVoteComment = (v: IVoteComment) => {
+    const newRecords = comments.records.map((comment) => {
+      console.log(comment._id, v.commentId, comment._id === v.commentId);
+
+      if (comment._id === v.commentId) {
+        return { ...comment, vote: v.vote };
+      }
+
+      return comment;
+    });
+    setComments({ ...comments, records: newRecords });
+  };
+
   return (
     <Dialog
       open={open}
@@ -77,7 +88,8 @@ export const ListChildComment = ({
                 key={com._id}
                 comment={com}
                 post={post}
-                // commentSuccess={commentSuccess}
+                commentSuccess={commentSuccess}
+                voteCommentSuccess={handleVoteComment}
               />
             );
           })
