@@ -1,4 +1,5 @@
 import axios from "axios";
+import queryString from "query-string";
 import { BASE_HOST, RecordStatus } from ".";
 
 export interface IPostModel {
@@ -12,6 +13,7 @@ export interface IPostModel {
     email: string;
   };
   status: RecordStatus;
+  createdAt?: Date;
 }
 
 export interface ICreatePostRequest {
@@ -45,4 +47,28 @@ export const callDeletePost = async (id: string) => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+};
+
+export interface IGetPostsRequest {
+  page?: number;
+  limit?: number;
+  tags?: string[];
+  sortType?: "latest" | "oldest";
+}
+export interface IGetPostsResponse {
+  records: IPostModel[];
+  metadata?: {
+    totalPage: number;
+    totalRecord: number;
+    currentPage: number;
+    limit: number;
+  };
+}
+
+export const callGetPostsApi = async (body: IGetPostsRequest) => {
+  const result: any = await axios.get(
+    `${BASE_HOST}/api/post?${queryString.stringify(body, { skipNull: false })}`
+  );
+
+  return result.data.data as IGetPostsResponse;
 };

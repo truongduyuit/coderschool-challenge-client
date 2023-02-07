@@ -12,7 +12,7 @@ import {
 import { styled } from "@mui/material/styles";
 import MDEditor from "@uiw/react-md-editor";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";

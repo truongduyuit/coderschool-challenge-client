@@ -1,18 +1,17 @@
 import { Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
-import { Stack } from "@mui/system";
-import banner from "../assets/images/banner.webp";
-import { SearchBox } from "../components";
 import { useEffect } from "react";
-import { callFetchTags } from "../apis";
 import { useDispatch } from "react-redux";
+import { callFetchTags } from "../apis";
+import banner from "../assets/images/banner.webp";
+import { ListPost, SearchBox } from "../components";
 import { setTags } from "../redux/main";
 
 const BannerWrapper = styled("div")(({ theme }) => ({
   backgroundImage: `url(${banner})`,
   backgroundSize: "auto",
-  height: "80vh",
+  height: "40vh",
   width: "100%",
   margin: "3.2em 0",
 }));
@@ -51,7 +50,7 @@ export const HomePage = () => {
         <SearchFormWrapper className="search-form flex flex-row items-center justify-center">
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Box>Tìm kiếm bài viết</Box>
+              <Box>Article Search</Box>
             </Grid>
             <Grid item xs={12}>
               <SearchBox />
@@ -59,6 +58,10 @@ export const HomePage = () => {
           </Grid>
         </SearchFormWrapper>
       </BannerWrapper>
+
+      <Box>
+        <ListPost />
+      </Box>
     </div>
   );
 };

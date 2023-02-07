@@ -64,10 +64,9 @@ export const PostDetail = () => {
     if (postId) {
       dispatch(setLoading(true));
 
-      callGetPostById(postId).then((data) => {
-        setPost(data);
-        dispatch(setLoading(false));
-      });
+      callGetPostById(postId)
+        .then((data) => setPost(data))
+        .finally(() => dispatch(setLoading(false)));
     }
   }, [postId]);
 
@@ -178,8 +177,6 @@ export const PostDetail = () => {
 
   const handleVoteComment = (v: IVoteComment) => {
     const newRecords = comments.records.map((comment) => {
-      console.log(comment._id, v.commentId, comment._id === v.commentId);
-
       if (comment._id === v.commentId) {
         return { ...comment, vote: v.vote };
       }
