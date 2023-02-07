@@ -1,6 +1,6 @@
 import axios from "axios";
 import queryString from "query-string";
-import { BASE_HOST } from ".";
+import { BASE_HOST, VoteAction } from ".";
 
 export interface IComment {
   _id?: string;
@@ -19,7 +19,7 @@ export interface IComment {
   comment?: string;
   replyToCommentId?: string;
   level?: number;
-
+  vote?: VoteAction;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -60,8 +60,15 @@ export interface IGetCommentResponse {
 }
 
 export const callGetCommentApi = async (body: IGetCommentRequest) => {
+  const accessToken = localStorage.getItem("accessToken");
+
   const result: any = await axios.get(
-    `${BASE_HOST}/api/comment?${queryString.stringify(body)}`
+    `${BASE_HOST}/api/comment?${queryString.stringify(body)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
   );
 
   return result.data.data as IGetCommentResponse;

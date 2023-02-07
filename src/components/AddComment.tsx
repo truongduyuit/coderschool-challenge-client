@@ -5,14 +5,13 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { callCreateCommentApi, IComment, IPostModel } from "../apis";
 import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "../redux/main";
-import { useToast } from "../hooks";
+import { useDispatch } from "react-redux";
+import { callCreateCommentApi, IComment, IPostModel } from "../apis";
 import { ErrorMessages } from "../configs";
-import { RootState } from "../redux/store";
+import { useToast } from "../hooks";
+import { setLoading } from "../redux/main";
 
 type Props = {
   open: boolean;
@@ -32,7 +31,6 @@ export const AddComment = ({
   const dispatch = useDispatch();
   const { showToast } = useToast();
   const [content, setContent] = useState<string>("");
-  const email = useSelector((state: RootState) => state.user.email);
 
   const handleComment = async function () {
     try {

@@ -6,8 +6,15 @@ export enum RecordStatus {
   deleted = "deleted",
 }
 
+export enum VoteAction {
+  upvote = 1,
+  downvote = -1,
+  normal = 0,
+}
+
 export * from "./auth";
 export * from "./post";
 export * from "./tag";
 export * from "./vote";
 export * from "./comment";
+export * from "./voteComment";

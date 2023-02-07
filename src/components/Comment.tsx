@@ -1,3 +1,5 @@
+import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import {
   Box,
   Button,
@@ -7,25 +9,87 @@ import {
   CardHeader,
   IconButton,
 } from "@mui/material";
-import ReactMarkdown from "react-markdown";
-import { IComment, IPostModel } from "../apis";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import { AddComment } from "./AddComment";
+import { Action } from "@remix-run/router";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { IComment, IPostModel, VoteAction } from "../apis";
+import {
+  callCreateOrUpdateVoteComment,
+  IVoteComment,
+} from "../apis/voteComment";
+import { ErrorMessages, MAX_COMMENT_LEVEL } from "../configs";
+import { useToast } from "../hooks";
+import { setLoading } from "../redux/main";
+import { RootState } from "../redux/store";
+import { AddComment } from "./AddComment";
 import { ListChildComment } from "./ListChildComment";
-import { MAX_COMMENT_LEVEL } from "../configs";
 import { ShowMoreContent } from "./ShowMoreContent";
 
 interface Props {
   comment: IComment;
   post: IPostModel;
   commentSuccess?: (newComment: IComment) => void;
+  voteCommentSuccess?: (vote: IVoteComment) => void;
 }
 
-export const Comment = ({ comment, post, commentSuccess }: Props) => {
+export const Comment = ({
+  comment,
+  post,
+  commentSuccess,
+  voteCommentSuccess,
+}: Props) => {
+  const dispatch = useDispatch();
+  const { showToast } = useToast();
   const [openReplyForm, setOpenReplyForm] = useState(false);
   const [openViewReply, setOpenViewReply] = useState(false);
+  const [currentVote, setCurrentVote] = useState<VoteAction>(
+    comment?.vote || VoteAction.normal
+  );
+
+  const userId = useSelector((state: RootState) => state.user.userId);
+
+  const handleVoteComment = async (voteAction: VoteAction) => {
+    try {
+      if (comment && comment._id) {
+        // if logged in, call api
+        // else saved to localStorage
+        if (userId) {
+          dispatch(setLoading(true));
+
+          const voteComment = await callCreateOrUpdateVoteComment({
+            commentId: comment._id,
+            vote: voteAction,
+          });
+
+          voteCommentSuccess?.(voteComment);
+
+          setCurrentVote(voteAction);
+        } else {
+          // will handle after login in feature
+          let newVoteComment = {
+            [comment._id]: Action,
+          };
+
+          const voteComment = localStorage.getItem("voteComment");
+          if (voteComment) {
+            const objVoteComment = JSON.parse(voteComment);
+            if (typeof objVoteComment === "object") {
+              newVoteComment = { ...objVoteComment, ...newVoteComment };
+            }
+          }
+
+          localStorage.setItem("voteComment", JSON.stringify(newVoteComment));
+        }
+      }
+    } catch (error: any) {
+      showToast({
+        alertType: "error",
+        message: ErrorMessages[error.response.data.code as string],
+      });
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   return (
     <>
@@ -45,15 +109,15 @@ export const Comment = ({ comment, post, commentSuccess }: Props) => {
         <CardActions>
           <IconButton
             aria-label="Like"
-            //   color={voteAction === VoteAction.upvote ? "primary" : "default"}
-            //   onClick={() => handleVote(VoteAction.upvote)}
+            color={currentVote === VoteAction.upvote ? "primary" : "default"}
+            onClick={() => handleVoteComment(VoteAction.upvote)}
           >
             <ThumbUpIcon />
           </IconButton>
           <IconButton
             aria-label="Dislike"
-            //   color={voteAction === VoteAction.downvote ? "primary" : "default"}
-            //   onClick={() => handleVote(VoteAction.downvote)}
+            color={currentVote === VoteAction.downvote ? "primary" : "default"}
+            onClick={() => handleVoteComment(VoteAction.downvote)}
           >
             <ThumbDownAltIcon />
           </IconButton>

@@ -31,6 +31,7 @@ import {
   IComment,
   IGetCommentResponse,
   IPostModel,
+  IVoteComment,
   VoteAction,
 } from "../apis";
 import { Comment } from "../components";
@@ -175,6 +176,18 @@ export const PostDetail = () => {
     setCommentPage(commentPage + 1);
   };
 
+  const handleVoteComment = async (v: IVoteComment) => {
+    const newRecords = comments.records.map((comment) => {
+      if (comment._id === v.commentId) {
+        return { ...comment, vote: v.vote };
+      }
+
+      return comment;
+    });
+
+    setComments({ ...comments, records: newRecords });
+  };
+
   return (
     <>
       <Container maxWidth="lg">
@@ -260,6 +273,7 @@ export const PostDetail = () => {
                 comment={com}
                 post={post}
                 commentSuccess={commentSuccess}
+                voteCommentSuccess={handleVoteComment}
               />
             );
           })

@@ -1,11 +1,6 @@
 import axios from "axios";
-import { BASE_HOST } from ".";
+import { BASE_HOST, VoteAction } from ".";
 
-export enum VoteAction {
-  upvote = 1,
-  downvote = -1,
-  normal = 0,
-}
 export interface IVote {
   postId: string;
   postInfo: {
