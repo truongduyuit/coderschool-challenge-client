@@ -1,7 +1,6 @@
 import { Autocomplete } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 
 type Props = {
@@ -24,19 +23,31 @@ export const SearchBox = ({ setKeywords, keywords }: Props) => {
 
   return (
     <Autocomplete
+      multiple
       freeSolo
       disableClearable
+      limitTags={5}
+      id="multiple-limit-tags"
       style={{
         color: "#fff",
       }}
       onKeyDown={handleKeyDown}
       options={tags.map((option) => option)}
       renderOption={(props, option) => (
-        <li {...props} key={option} onClick={() => setKeywords?.([option])}>
+        <li
+          {...props}
+          key={option}
+          onClick={() => {
+            const keys = new Set(keywords);
+            keys.add(option);
+            setKeywords?.(Array.from(keys));
+          }}
+        >
           <Box>{option}</Box>
         </li>
       )}
-      value={keywords.join(" ")}
+      onChange={(event, newValue) => setKeywords?.(newValue as string[])}
+      value={keywords}
       renderInput={(params) => (
         <TextField
           {...params}
