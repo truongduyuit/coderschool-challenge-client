@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { callFetchTags } from "../apis";
 import banner from "../assets/images/banner.webp";
@@ -11,9 +11,9 @@ import { setTags } from "../redux/main";
 const BannerWrapper = styled("div")(({ theme }) => ({
   backgroundImage: `url(${banner})`,
   backgroundSize: "auto",
-  height: "40vh",
+  height: "30vh",
   width: "100%",
-  margin: "3.2em 0",
+  marginTop: "3.2em",
 }));
 
 const SearchFormWrapper = styled("div")(({ theme }) => ({
@@ -28,6 +28,7 @@ const SearchFormWrapper = styled("div")(({ theme }) => ({
 
 export const HomePage = () => {
   const dispatch = useDispatch();
+  const [keywords, setKeywords] = useState<string[]>([]);
 
   useEffect(() => {
     fetchTags();
@@ -53,14 +54,14 @@ export const HomePage = () => {
               <Box>Article Search</Box>
             </Grid>
             <Grid item xs={12}>
-              <SearchBox />
+              <SearchBox setKeywords={setKeywords} keywords={keywords} />
             </Grid>
           </Grid>
         </SearchFormWrapper>
       </BannerWrapper>
 
       <Box>
-        <ListPost />
+        <ListPost keywords={keywords} />
       </Box>
     </div>
   );

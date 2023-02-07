@@ -4,15 +4,21 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 
-type Props = {};
+type Props = {
+  keywords: string[];
+  setKeywords?: React.Dispatch<React.SetStateAction<string[]>>;
+};
 
-export const SearchBox = (props: Props) => {
-  const navigator = useNavigate();
+export const SearchBox = ({ setKeywords, keywords }: Props) => {
   const tags = useSelector((state: RootState) => state.app.tags);
 
   const handleKeyDown = (event: any) => {
-    if (event.key === "Enter") {
-      navigator(`/post?keywords=${event.target.value}`);
+    if (
+      event.key === "Enter" &&
+      event.target &&
+      typeof event.target.value === "string"
+    ) {
+      setKeywords?.(event.target.value.split(" "));
     }
   };
 
@@ -26,12 +32,11 @@ export const SearchBox = (props: Props) => {
       onKeyDown={handleKeyDown}
       options={tags.map((option) => option)}
       renderOption={(props, option) => (
-        <Link to={`/post?keywords=${option}`}>
-          <li {...props}>
-            <Box>{option}</Box>
-          </li>
-        </Link>
+        <li {...props} key={option} onClick={() => setKeywords?.([option])}>
+          <Box>{option}</Box>
+        </li>
       )}
+      value={keywords.join(" ")}
       renderInput={(params) => (
         <TextField
           {...params}
