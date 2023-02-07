@@ -4,11 +4,15 @@ import { styled } from "@mui/material/styles";
 import { Stack } from "@mui/system";
 import banner from "../assets/images/banner.webp";
 import { SearchBox } from "../components";
+import { useEffect } from "react";
+import { callFetchTags } from "../apis";
+import { useDispatch } from "react-redux";
+import { setTags } from "../redux/main";
 
 const BannerWrapper = styled("div")(({ theme }) => ({
   backgroundImage: `url(${banner})`,
   backgroundSize: "auto",
-  height: "28.125em",
+  height: "80vh",
   width: "100%",
   margin: "3.2em 0",
 }));
@@ -18,30 +22,39 @@ const SearchFormWrapper = styled("div")(({ theme }) => ({
   borderRadius: "1rem",
   padding: "1em",
 
-  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.main,
+  border: `5px solid ${theme.palette.secondary.main}`,
+  backgroundColor: "#fff",
 }));
 
-const topKeywords = ["chung", "nguyễn", "trường", "duy"];
-
 export const HomePage = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchTags();
+  }, []);
+
+  const fetchTags = async () => {
+    try {
+      const tags = await callFetchTags();
+      if (Array.isArray(tags)) {
+        dispatch(setTags(tags));
+      }
+    } catch (error) {
+      // don't need alert this error
+    }
+  };
+
   return (
     <div className="container mx-auto">
-      <BannerWrapper className="flex items-center">
-        <SearchFormWrapper className="search-form">
+      <BannerWrapper className="flex items-center justify-center">
+        <SearchFormWrapper className="search-form flex flex-row items-center justify-center">
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box>Tìm kiếm bài viết</Box>
             </Grid>
             <Grid item xs={12}>
               <SearchBox />
-            </Grid>
-            <Grid item xs={12}>
-              <Stack direction="row" spacing={2}>
-                <Box>Từ khóa tìm kiếm nhiều: </Box>
-                {topKeywords.map((key) => {
-                  return <Box key={key}>{key}</Box>;
-                })}
-              </Stack>
             </Grid>
           </Grid>
         </SearchFormWrapper>

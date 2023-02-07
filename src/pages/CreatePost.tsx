@@ -19,7 +19,7 @@ import * as Yup from "yup";
 import { callCreatePost, callFetchTags, ICreatePostRequest } from "../apis";
 import { ErrorMessages } from "../configs";
 import { useToast } from "../hooks";
-import { setLoading } from "../redux/main";
+import { setLoading, setTags } from "../redux/main";
 import { RootState } from "../redux/store";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -41,8 +41,8 @@ export const CreatePostPage = () => {
   const dispatch = useDispatch();
   const navigator = useNavigate();
   const { showToast } = useToast();
-  const [tags, setTags] = useState<string[]>([]);
   const userInfo = useSelector((state: RootState) => state.user);
+  const tags = useSelector((state: RootState) => state.app.tags);
 
   const formik = useFormik({
     initialValues: {
@@ -85,7 +85,9 @@ export const CreatePostPage = () => {
   const fetchTags = async () => {
     try {
       const tags = await callFetchTags();
-      if (Array.isArray(tags)) setTags(tags);
+      if (Array.isArray(tags)) {
+        dispatch(setTags(tags));
+      }
     } catch (error) {
       // don't need alert this error
     }
@@ -181,20 +183,7 @@ export const CreatePostPage = () => {
                   {...params}
                   label="Post tags"
                   style={{ backgroundColor: "#fff" }}
-
-                  // InputProps={{
-                  //   startAdornment: (
-                  //     <InputAdornment position="start">
-                  //       <WorkHistoryIcon />
-                  //     </InputAdornment>
-                  //   ),
-                  // }}
                 />
-                // <TextField
-                //   {...params}
-                //   label="Tất cả nghề nghiệp"
-                //   style={{ backgroundColor: "#fff" }}
-                // />
               )}
             />
 

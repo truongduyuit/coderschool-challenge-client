@@ -14,7 +14,6 @@ import {
   IVoteComment,
 } from "../apis";
 import { Comment } from "../components";
-import { useToast } from "../hooks";
 import { setLoading } from "../redux/main";
 
 type Props = {
