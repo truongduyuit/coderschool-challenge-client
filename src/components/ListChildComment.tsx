@@ -59,8 +59,6 @@ export const ListChildComment = ({
 
   const handleVoteComment = (v: IVoteComment) => {
     const newRecords = comments.records.map((comment) => {
-      console.log(comment._id, v.commentId, comment._id === v.commentId);
-
       if (comment._id === v.commentId) {
         return { ...comment, vote: v.vote };
       }
@@ -81,10 +79,10 @@ export const ListChildComment = ({
 
       <DialogContent style={{ minWidth: 600, minHeight: 300 }}>
         {comments.records.length ? (
-          comments.records.map((com) => {
+          comments.records.map((com, index) => {
             return (
               <Comment
-                key={com._id}
+                key={`${com._id}${index}`}
                 comment={com}
                 post={post}
                 commentSuccess={commentSuccess}

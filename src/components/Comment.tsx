@@ -49,6 +49,8 @@ export const Comment = ({
   const userId = useSelector((state: RootState) => state.user.userId);
 
   const handleVoteComment = async (voteAction: VoteAction) => {
+    if (currentVote === voteAction) return;
+
     try {
       if (comment && comment._id) {
         // if logged in, call api
@@ -67,7 +69,7 @@ export const Comment = ({
         } else {
           // will handle after login in feature
           let newVoteComment = {
-            [comment._id]: Action,
+            [comment._id]: voteAction,
           };
 
           const voteComment = localStorage.getItem("voteComment");

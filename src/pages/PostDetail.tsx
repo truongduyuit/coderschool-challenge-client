@@ -34,7 +34,7 @@ import {
   IVoteComment,
   VoteAction,
 } from "../apis";
-import { Comment } from "../components";
+import { Comment, ListTags, ShowMoreContent } from "../components";
 import { AddComment } from "../components/AddComment";
 import { ErrorMessages } from "../configs";
 import { useToast, useViewport } from "../hooks";
@@ -175,28 +175,23 @@ export const PostDetail = () => {
     setCommentPage(commentPage + 1);
   };
 
-  const handleVoteComment = (v: IVoteComment) => {
-    const newRecords = comments.records.map((comment) => {
-      if (comment._id === v.commentId) {
-        return { ...comment, vote: v.vote };
-      }
+  // const handleVoteComment = (v: IVoteComment) => {
+  //   const newRecords = comments.records.map((comment) => {
+  //     if (comment._id === v.commentId) {
+  //       return { ...comment, vote: v.vote };
+  //     }
 
-      return comment;
-    });
+  //     return comment;
+  //   });
 
-    setComments({ ...comments, records: newRecords });
-  };
+  //   setComments({ ...comments, records: newRecords });
+  // };
 
   return (
     <>
       <Container maxWidth="lg">
         {post !== null ? (
-          <Box
-            sx={{
-              pb: 1,
-              pt: 3,
-            }}
-          >
+          <Box className="pb-1 pt-3">
             <Card className="border-8 border-red-400" color="primary">
               <CardHeader
                 action={
@@ -211,24 +206,13 @@ export const PostDetail = () => {
                   )
                 }
                 title={post?.title}
-                subheader={post?.userInfo.email}
+                subheader={post?.userInfo?.email || "anonymous"}
               />
 
               <CardContent sx={{ minHeight: 250 }}>
-                {post?.content && <ReactMarkdown children={post.content} />}
-                <Stack direction="row" spacing={1}>
-                  {post?.tags.map((tag) => {
-                    return (
-                      <Chip
-                        label={tag}
-                        component="a"
-                        href="#basic-chip"
-                        variant="outlined"
-                        clickable
-                      />
-                    );
-                  })}
-                </Stack>
+                {post?.content && <ShowMoreContent content={post.content} />}
+
+                <ListTags tags={post?.tags} />
               </CardContent>
               <CardActions className="flex flex-row justify-end">
                 <IconButton
@@ -265,14 +249,14 @@ export const PostDetail = () => {
         </Box>
 
         {post && comments.records.length ? (
-          comments.records.map((com) => {
+          comments.records.map((com, index) => {
             return (
               <Comment
-                key={com._id}
+                key={`${com._id}${index}`}
                 comment={com}
                 post={post}
                 commentSuccess={commentSuccess}
-                voteCommentSuccess={handleVoteComment}
+                // voteCommentSuccess={handleVoteComment}
               />
             );
           })

@@ -8,7 +8,7 @@ export interface IVote {
     title: string;
     content: string;
   };
-
+  vote: VoteAction;
   userId: string;
   userInfo: {
     _id: string;

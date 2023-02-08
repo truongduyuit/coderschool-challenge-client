@@ -1,14 +1,12 @@
 import { Autocomplete } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setKeywords } from "../redux/main";
 import { RootState } from "../redux/store";
 
-type Props = {
-  keywords: string[];
-  setKeywords?: React.Dispatch<React.SetStateAction<string[]>>;
-};
-
-export const SearchBox = ({ setKeywords, keywords }: Props) => {
+export const SearchBox = () => {
+  const dispatch = useDispatch();
+  const keywords = useSelector((state: RootState) => state.app.keywords);
   const tags = useSelector((state: RootState) => state.app.tags);
 
   const handleKeyDown = (event: any) => {
@@ -17,7 +15,7 @@ export const SearchBox = ({ setKeywords, keywords }: Props) => {
       event.target &&
       typeof event.target.value === "string"
     ) {
-      setKeywords?.(event.target.value.split(" "));
+      dispatch(setKeywords(event.target.value.split(" ") as string[]));
     }
   };
 
@@ -40,13 +38,13 @@ export const SearchBox = ({ setKeywords, keywords }: Props) => {
           onClick={() => {
             const keys = new Set(keywords);
             keys.add(option);
-            setKeywords?.(Array.from(keys));
+            dispatch(setKeywords(Array.from(keys)));
           }}
         >
           <Box>{option}</Box>
         </li>
       )}
-      onChange={(event, newValue) => setKeywords?.(newValue as string[])}
+      onChange={(event, newValue) => dispatch(setKeywords(newValue))}
       value={keywords}
       renderInput={(params) => (
         <TextField

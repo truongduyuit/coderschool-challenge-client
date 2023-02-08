@@ -54,14 +54,14 @@ export const HomePage = () => {
               <Box>Article Search</Box>
             </Grid>
             <Grid item xs={12}>
-              <SearchBox setKeywords={setKeywords} keywords={keywords} />
+              <SearchBox />
             </Grid>
           </Grid>
         </SearchFormWrapper>
       </BannerWrapper>
 
       <Box>
-        <ListPost keywords={keywords} />
+        <ListPost />
       </Box>
     </div>
   );

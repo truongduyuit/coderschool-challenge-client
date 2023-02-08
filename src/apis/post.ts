@@ -1,6 +1,6 @@
 import axios from "axios";
 import queryString from "query-string";
-import { BASE_HOST, RecordStatus } from ".";
+import { BASE_HOST, RecordStatus, VoteAction } from ".";
 
 export interface IPostModel {
   _id: string;
@@ -10,10 +10,15 @@ export interface IPostModel {
   userId: string;
   userInfo: {
     _id: string;
-    email: string;
+    email?: string;
   };
+  vote?: VoteAction;
+  comments?: number;
+  upvotes?: number;
+  downvotes?: number;
   status: RecordStatus;
   createdAt?: Date;
+  postId: string;
 }
 
 export interface ICreatePostRequest {
@@ -66,8 +71,15 @@ export interface IGetPostsResponse {
 }
 
 export const callGetPostsApi = async (body: IGetPostsRequest) => {
+  const accessToken = localStorage.getItem("accessToken");
+
   const result: any = await axios.get(
-    `${BASE_HOST}/api/post?${queryString.stringify(body, { skipNull: false })}`
+    `${BASE_HOST}/api/post?${queryString.stringify(body, { skipNull: false })}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
   );
 
   return result.data.data as IGetPostsResponse;
